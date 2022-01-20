@@ -31,10 +31,34 @@
 			<h1>Quiz Game</h1>
 			<h3>Leaderboard</h3> <br>
             <?php
-            $xml = simplexml_load_file("/home/quintab2122/public_html/sistemi/BCCOrientamento/leaderboard.xml");
-            if($xml == NULL)
-              	echo "Rotto";
 
+						function array_sort_by_column(&$array, $column, $direction = SORT_DESC) 
+						{
+						    $reference_array = array();
+
+						    foreach($array as $key => $row) {
+						        $reference_array[$key] = $row[$column];
+						    }
+
+						    array_multisort($reference_array, $direction, $array);
+						}
+
+						$xml = simplexml_load_file("/home/quintab2122/public_html/sistemi/BCCOrientamento/leaderboard.xml");
+			        if($xml == NULL)
+			          echo "Rotto";
+
+						foreach($xml->children() as $element) 
+						{
+						    $data[] = array(
+                 'nickname'             => (string)$element->nickname,
+                 'points' => intval($element->points)
+                );
+                
+						}
+
+						array_sort_by_column($data, 'points');
+
+						
 
             // Creazione tabella
             echo "<table class='table'>";
@@ -44,12 +68,16 @@
             echo "</tr>";
 
             // Stampa "in ampiezza" dell'albero
-              foreach($xml->children() as $element)
+              foreach($data as $element)
               {
-                echo "<tr>";
-                echo "<td>".$element->nickname."</td>";
-                echo "<td>".$element->points."</td>";
-                echo"</tr>";
+ 
+
+             				echo "<tr>";
+                	echo "<td>".$element['nickname']."</td>";
+                	echo "<td>".$element['points']."</td>";
+                	echo"</tr>";   
+      
+  
 
               }
               echo "</table>";
